@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HVAC Pro NY · Heating & cooling for NYC apartments, open 24 hours</title>
+<meta name="description" content="HVAC Pro NY, LLC: heating and cooling repairs and installs for apartments and buildings in Brooklyn and Queens. Open 24 hours. 5.0 on Google. Call (929) 636-0812.">
+<meta name="theme-color" content="#F1F2F0">
+<link rel="icon" type="image/png" href="assets/icon-64.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500..900&family=Work+Sans:ital,wght@0,400..700;1,400..500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/condenser.webp">
+<link rel="stylesheet" href="scrollcraft.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HVACBusiness",
+  "name": "HVAC Pro NY, LLC",
+  "telephone": "+1-929-636-0812",
+  "email": "hvacprofessionals.ny@gmail.com",
+  "logo": "assets/logo-sticker.webp",
+  "employee": { "@type": "Person", "name": "Deanysh Persaud", "jobTitle": "HVAC Technician" },
+  "areaServed": [ { "@type": "City", "name": "Brooklyn, NY" }, { "@type": "City", "name": "Queens, NY" } ],
+  "openingHoursSpecification": { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }
+}
+</script>
+<style>
+/* --------------------------------------------------------------- tokens */
+:root {
+  --paper: #F1F2F0;
+  --ink:   #0D1015;
+  --soft:  #4A515B;
+  --red:   #D7261E;   /* the flame on the card */
+  --red-d: #B81C14;   /* small red text on paper */
+  --blue:  #1F64C8;   /* the snowflake, used only for cooling */
+  --wall:  #181B20;
+  --led:   #3BD16F;
+
+  --sc-canvas: var(--paper);
+  --sc-surface: #FFFFFF;
+  --sc-ink: var(--ink);
+  --sc-ink-soft: var(--soft);
+  --sc-accent: var(--red);
+  --sc-accent-ink: #FFFFFF;
+  --sc-font-display: "Big Shoulders Display", Impact, sans-serif;
+  --sc-font-text: "Work Sans", system-ui, sans-serif;
+  --sc-shadow-color: 220 20% 20%;
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --bar: 4.6rem;      /* height reserved for the row of units */
+}
+body { background: var(--paper); color: var(--ink); font-family: var(--sc-font-text); }
+h1, h2, h3 { margin: 0; font-family: var(--sc-font-display); font-weight: 900; text-transform: uppercase; line-height: .84; letter-spacing: -0.005em; text-wrap: balance; }
+p { margin: 0; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wrap { width: 100%; max-width: 92rem; margin-inline: auto; padding-inline: var(--sc-gutter); }
+.label { font-family: var(--sc-font-display); font-weight: 700; font-size: .95rem; letter-spacing: .12em; text-transform: uppercase; }
+.skip { position: absolute; left: 1rem; top: -4rem; z-index: 100; background: var(--ink); color: #fff; padding: .6rem 1rem; border-radius: 6px; }
+.skip:focus { top: 1rem; }
+.dark { --sc-ink: #F1F2F0; --sc-ink-soft: #A9B0BA; --sc-accent: #FF5A47; --sc-accent-ink: #0D1015; color: var(--sc-ink); background: var(--wall); }
+.on-red { --sc-ink: #FFFFFF; --sc-ink-soft: #FFE3DE; color: #FFFFFF; background: var(--red); }
+
+/* --------------------------------------------------------------- buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 3.1rem; padding: .8rem 1.3rem; border-radius: 4px; border: 0; cursor: pointer; text-decoration: none; white-space: nowrap;
+  font-family: var(--sc-font-display); font-weight: 800; font-size: 1.35rem; letter-spacing: .03em; text-transform: uppercase; transition: transform 140ms var(--ease), background-color 160ms var(--ease), box-shadow 160ms var(--ease); }
+.btn svg { width: 1.05em; height: 1.05em; }
+.btn--call { background: var(--sc-accent); color: var(--sc-accent-ink); box-shadow: 0 2px 0 rgba(0,0,0,.18), var(--sc-e2); }
+.btn--line { background: transparent; color: var(--sc-ink); box-shadow: inset 0 0 0 2px currentColor; }
+.btn:active { transform: translateY(1px) scale(.98); }
+@media (hover: hover) and (pointer: fine) { .btn--call:hover { background: color-mix(in oklab, var(--sc-accent) 88%, black); } .btn--line:hover { background: color-mix(in oklab, var(--sc-ink) 8%, transparent); } }
+
+/* ----------------------------------------------------- fan blades (shared) */
+.fan { position: absolute; border-radius: 50%; background: #07090C; overflow: hidden; }
+.fan svg { width: 100%; height: 100%; max-width: none; display: block; will-change: transform; }
+
+/* ================================================= THE ROW (signature nav) */
+.row { position: fixed; z-index: 80; left: 50%; bottom: calc(.8rem + env(safe-area-inset-bottom)); translate: -50% 0; display: flex; align-items: center; gap: .5rem;
+  padding: .45rem .45rem .45rem .9rem; background: var(--ink); color: #F1F2F0; border-radius: 10px; box-shadow: 0 18px 40px -16px rgba(13,16,21,.55), inset 0 1px 0 rgba(255,255,255,.08); }
+.row__brand { font-family: var(--sc-font-display); font-weight: 900; font-size: 1.15rem; letter-spacing: .02em; text-transform: uppercase; text-decoration: none; padding-right: .6rem; margin-right: .2rem; border-right: 1px solid rgba(241,242,240,.16); line-height: 1; }
+.row__brand b { color: #FF5A47; font-weight: 900; } .row__brand i { font-style: normal; color: #6FA3F0; }
+.row ol { list-style: none; margin: 0; padding: 0; display: flex; gap: .3rem; }
+.row a.u { position: relative; display: grid; justify-items: center; gap: .2rem; padding: .25rem .35rem .2rem; border-radius: 6px; text-decoration: none; color: #8C949F; transition: background-color 160ms var(--ease), color 160ms var(--ease); }
+.row a.u .u__t { font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; line-height: 1; }
+.row a.u[aria-current="true"] { color: #F1F2F0; background: rgba(241,242,240,.08); }
+.row a.u.is-on { color: #C9CED6; }
+@media (hover: hover) and (pointer: fine) { .row a.u:hover { color: #F1F2F0; background: rgba(241,242,240,.06); } }
+.mini { width: 3rem; height: 2.15rem; position: relative; }
+.mini__body { position: absolute; inset: 0 0 .25rem 0; background: linear-gradient(180deg, #F4F5F6, #D5D9DE); border-radius: 3px; box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0,0,0,.4); }
+.mini .fan { left: 9%; top: 9%; width: 1.5rem; height: 1.5rem; }
+.mini__led { position: absolute; right: 12%; top: 22%; width: .32rem; height: .32rem; border-radius: 50%; background: #5A616B; transition: background-color 300ms var(--ease), box-shadow 300ms var(--ease); }
+.is-on .mini__led { background: var(--led); box-shadow: 0 0 0 2px rgba(59,209,111,.22); }
+.mini__legs { position: absolute; left: 12%; right: 12%; bottom: 0; height: .3rem; border-left: 3px solid #2B3038; border-right: 3px solid #2B3038; }
+.row__call { display: none; }
+.row .btn { min-height: 2.9rem; font-size: 1.15rem; padding: .5rem 1rem; margin-left: .3rem; background: #FF5A47; color: var(--ink); }
+@media (max-width: 860px) {
+  .row { left: .5rem; right: .5rem; translate: none; justify-content: space-between; padding: .4rem; gap: .3rem; }
+  .row__brand { display: none; }
+  .row a.u .u__t { display: none; }
+  .row a.u { padding: .3rem .18rem; }
+  .mini { width: 2.3rem; height: 1.7rem; } .mini .fan { width: 1.16rem; height: 1.16rem; }
+  .row .btn { font-size: 1.1rem; padding: .5rem .75rem; flex: none; margin-left: 0; gap: .35rem; }
+  .row__num { display: none; } .row__call { display: inline; }
+  .row ol { gap: .1rem; }
+}
+
+/* ============================================================ 1 · THE NAME */
+.name { position: relative; min-height: 100svh; overflow: clip; padding: clamp(1.2rem, 3vh, 2rem) 0 calc(var(--bar) + 2rem); }
+.name__far { position: absolute; inset: 0; pointer-events: none; }
+.name__far svg { position: absolute; max-width: none; }
+.name__far .flame { left: -6vw; bottom: -8vh; width: 34vw; opacity: .09; color: var(--red); }
+.name__far .snow { right: -7vw; top: -10vh; width: 40vw; opacity: .08; color: var(--blue); }
+.name__top { display: flex; align-items: center; gap: .9rem; position: relative; z-index: 3; }
+.name__top img { width: 5.4rem; height: auto; max-width: none; filter: drop-shadow(0 4px 10px rgba(13,16,21,.12)); }
+.name__top p { font-size: .95rem; line-height: 1.4; color: var(--soft); }
+.name__top p b { color: var(--ink); font-weight: 650; }
+.mark { position: relative; z-index: 2; margin-top: clamp(1rem, 5vh, 3.5rem); font-size: clamp(5rem, 17.6vw, 21rem); line-height: .8; letter-spacing: -0.012em; white-space: nowrap; will-change: transform; }
+.mark span { display: inline-block; }
+.mark .w1 { color: var(--red); } .mark .w3 { color: var(--blue); }
+.name__low { position: relative; z-index: 3; display: grid; grid-template-columns: minmax(0, 32rem) 1fr; gap: 2rem; margin-top: clamp(1.4rem, 4vh, 2.6rem); }
+.name__copy .tag { font-family: var(--sc-font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.7rem, 1.1rem + 1.6vw, 2.7rem); line-height: .95; letter-spacing: .005em; }
+.name__copy .tag em { font-style: normal; color: var(--red); }
+.name__copy p.sub { margin-top: .9rem; font-size: 1.08rem; line-height: 1.5; color: var(--soft); max-width: 28rem; }
+.name__copy p.sub b { color: var(--ink); font-weight: 650; }
+.ctas { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.4rem; }
+.proof { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .3rem .6rem; align-items: center; font-size: .95rem; color: var(--soft); }
+.proof .stars { color: #E9A100; letter-spacing: .12em; }
+.proof b { color: var(--ink); }
+.unit-hero { position: absolute; z-index: 2; right: max(var(--sc-gutter), 4vw); top: clamp(13rem, 36vh, 24rem); width: min(42vw, 46rem); will-change: transform; }
+.unit-hero img { position: relative; width: 100%; height: auto; max-width: none; filter: drop-shadow(0 30px 40px rgba(13,16,21,.28)) drop-shadow(0 6px 10px rgba(13,16,21,.18)); }
+.unit-hero .fan { left: 8.37%; top: 15.54%; width: 52.68%; aspect-ratio: 1; }
+.unit-hero__shadow { position: absolute; left: 6%; right: 6%; bottom: -3%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgba(13,16,21,.32), transparent); filter: blur(6px); }
+@media (max-width: 860px) {
+  .name__top img { width: 4.2rem; }
+  .name__top p { font-size: .85rem; }
+  .mark { font-size: 30vw; line-height: .8; margin-top: 1.2rem; white-space: normal; }
+  .mark .w1 { display: block; }
+  .name__low { grid-template-columns: 1fr; margin-top: 1.1rem; }
+  .unit-hero { position: relative; right: auto; top: auto; width: 82%; margin: 1.6rem auto 0; }
+}
+
+/* ======================================================= 2 · APARTMENTS */
+.apts { padding: clamp(6rem, 16vh, 11rem) 0 clamp(14rem, 40vh, 26rem); overflow: clip; }
+.apts .ln { display: block; font-family: var(--sc-font-display); font-weight: 900; text-transform: uppercase; line-height: .86; letter-spacing: -0.005em; }
+.apts .l1 { font-size: clamp(3.6rem, 11vw, 13rem); }
+.apts .l2 { font-size: clamp(2.6rem, 6.5vw, 7.5rem); text-align: right; margin-top: clamp(2.5rem, 7vh, 5rem); color: var(--blue); }
+.apts .l3 { font-size: clamp(3.2rem, 9vw, 11rem); margin-top: clamp(2.5rem, 7vh, 5rem); }
+.apts .l4 { font-size: clamp(2.4rem, 5.6vw, 6.4rem); margin-top: clamp(2.5rem, 7vh, 5rem); text-align: right; color: var(--red); }
+.apts .after { margin-top: clamp(3rem, 8vh, 5rem); max-width: 30rem; font-size: 1.12rem; line-height: 1.55; color: var(--soft); }
+.apts .after b { color: var(--ink); }
+.apts [data-sc-in] { transform: translateY(18px); }
+
+/* =========================================================== 3 · THE WALL */
+.wall .sc-stage { background:
+  repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 2px, transparent 2px 34px),
+  repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 2px, transparent 2px 92px),
+  linear-gradient(180deg, #1D2026, #15181C); }
+.wall__in { position: absolute; inset: 0; display: grid; grid-template-rows: auto 1fr; padding: clamp(1.6rem, 6vh, 3.4rem) var(--sc-gutter) calc(var(--bar) + 1.6rem); }
+.wall__head { position: relative; min-height: clamp(5.5rem, 13vh, 8rem); }
+.wall__head > div { position: absolute; left: 0; top: 0; }
+.wall__head h2 { font-size: clamp(2.6rem, 6vw, 6.4rem); color: #F1F2F0; }
+.wall__head h2 em { font-style: normal; color: #FF5A47; }
+.wall__head p { margin-top: .6rem; color: #A9B0BA; font-size: 1.02rem; }
+.wall__head .done { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
+.units { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.8rem, 2.4vh, 2rem) clamp(1rem, 3vw, 3rem); align-content: center; max-width: 82rem; width: 100%; margin: 0 auto; }
+.u8 { position: relative; display: grid; gap: .9rem; justify-items: start; }
+.u8::before { content: ""; position: absolute; left: -18%; right: -10%; top: -26%; height: 130%; max-width: 21rem; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255,214,150,.2), rgba(255,214,150,.06) 55%, transparent); opacity: 0; transition: opacity 500ms var(--ease); }
+.u8.is-on::before { opacity: 1; }
+.u8__box { position: relative; width: 100%; max-width: 15rem; }
+.u8__box img { position: relative; width: 100%; height: auto; max-width: none; filter: brightness(.34) saturate(.6) drop-shadow(0 14px 16px rgba(0,0,0,.45)); transition: filter 500ms var(--ease); }
+.u8.is-on .u8__box img { filter: brightness(.92) saturate(1) drop-shadow(0 14px 16px rgba(0,0,0,.45)); }
+.u8__box .fan { left: 8.37%; top: 15.54%; width: 52.68%; aspect-ratio: 1; }
+.u8__led { position: absolute; z-index: 2; right: 14%; top: 16%; width: 9px; height: 9px; border-radius: 50%; background: #3A3F47; transition: background-color 300ms var(--ease), box-shadow 300ms var(--ease); }
+.u8.is-on .u8__led { background: var(--led); box-shadow: 0 0 0 3px rgba(59,209,111,.25), 0 0 12px rgba(59,209,111,.6); }
+.u8__bracket { position: absolute; left: 6%; right: 6%; top: 88%; height: 7%; border-top: 4px solid #2C3139; border-left: 4px solid #2C3139; border-right: 4px solid #2C3139; }
+.u8 figcaption { font-family: var(--sc-font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.05rem, .8rem + .7vw, 1.55rem); letter-spacing: .02em; color: #474D56; line-height: 1; transition: color 300ms var(--ease); }
+.u8.is-on figcaption { color: #F1F2F0; }
+@media (max-width: 860px) {
+  .units { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem 1rem; align-content: start; margin-top: .6rem; }
+  .u8 { gap: .35rem; }
+  .u8__box { max-width: 6.8rem; }
+  .u8 figcaption { font-size: 1rem; }
+  .wall__head { min-height: 7.6rem; }
+  .wall__head h2 { font-size: 2.1rem; }
+  .wall__head p { font-size: .9rem; }
+  .wall__head .done .btn { font-size: 1.05rem; min-height: 2.6rem; }
+}
+
+/* ============================================================ 4 · THE WORK */
+.work { padding: clamp(6rem, 14vh, 10rem) 0; }
+.work h2 { font-size: clamp(4rem, 13vw, 15rem); }
+.work .intro { margin-top: 1.2rem; max-width: 32rem; font-size: 1.1rem; line-height: 1.55; color: var(--soft); }
+.shots { display: grid; grid-template-columns: 1.15fr .85fr 1fr; gap: clamp(1rem, 2.4vw, 2.4rem); margin-top: clamp(2.5rem, 6vh, 4rem); align-items: start; }
+.shots figure { margin: 0; }
+.shots .ph { overflow: hidden; border-radius: 3px; box-shadow: 0 20px 40px -24px rgba(13,16,21,.55); background: #DADDDA; }
+.shots .ph img { width: 100%; height: 100%; object-fit: cover; max-width: none; }
+.shots figure:nth-child(1) .ph { aspect-ratio: 3 / 4; }
+.shots figure:nth-child(2) { margin-top: clamp(3rem, 12vh, 8rem); } .shots figure:nth-child(2) .ph { aspect-ratio: 3 / 4; }
+.shots figure:nth-child(3) { margin-top: clamp(1rem, 5vh, 3rem); } .shots figure:nth-child(3) .ph { aspect-ratio: 4 / 5; }
+.shots dl { margin: .9rem 0 0; display: grid; grid-template-columns: 3.4rem 1fr; gap: .2rem .7rem; font-size: .92rem; line-height: 1.4; }
+.shots dt { font-family: var(--sc-font-display); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--soft); font-size: .85rem; padding-top: .1rem; }
+.shots dd { margin: 0; }
+@media (max-width: 860px) { .shots { grid-template-columns: 1fr; } .shots figure:nth-child(n) { margin-top: 0; } }
+
+/* ======================================================= 5 · THE REVIEWS */
+.reviews { padding: clamp(6rem, 14vh, 10rem) 0; overflow: clip; }
+.reviews .score { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; font-size: 1.05rem; }
+.reviews .score b { font-family: var(--sc-font-display); font-weight: 900; font-size: clamp(3rem, 6vw, 5.5rem); line-height: .8; }
+.reviews .score .stars { color: #FFE07A; letter-spacing: .14em; }
+.rv { margin: clamp(3rem, 8vh, 5.5rem) 0 0; }
+.rv blockquote { margin: 0; font-family: var(--sc-font-display); font-weight: 900; text-transform: uppercase; line-height: .84; letter-spacing: -0.005em; }
+.rv:nth-of-type(1) blockquote { font-size: clamp(3.6rem, 11.5vw, 13.5rem); }
+.rv:nth-of-type(2) blockquote { font-size: clamp(4.4rem, 16vw, 19rem); text-align: right; }
+.rv:nth-of-type(3) blockquote { font-size: clamp(3rem, 9.2vw, 10.5rem); }
+.rv figcaption { margin-top: 1rem; max-width: 34rem; font-size: 1rem; line-height: 1.5; color: var(--sc-ink-soft); }
+.rv:nth-of-type(2) figcaption { margin-left: auto; text-align: right; }
+.rv figcaption cite { display: block; margin-top: .35rem; font-style: normal; font-weight: 650; color: #FFFFFF; }
+
+/* ======================================================= 6 · ASK FOR DEANYSH */
+.who { padding: clamp(6rem, 14vh, 10rem) 0 clamp(4rem, 10vh, 7rem); }
+.who h2 { font-size: clamp(3.4rem, 10.5vw, 12.5rem); }
+.who h2 span { color: var(--red); }
+.who__row { display: grid; justify-content: start; grid-template-columns: auto minmax(0, 34rem); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; margin-top: clamp(2rem, 5vh, 3.5rem); }
+.who__row img { width: clamp(7rem, 12vw, 10rem); height: auto; max-width: none; rotate: -4deg; filter: drop-shadow(0 10px 18px rgba(13,16,21,.18)); }
+.who__row p { font-size: 1.12rem; line-height: 1.55; color: var(--soft); }
+.who__row p b { color: var(--ink); }
+@media (max-width: 860px) { .who__row { grid-template-columns: 1fr; } }
+
+/* ========================================================= 7 · THE CLOSE */
+.close { padding: clamp(3rem, 8vh, 5rem) 0 calc(var(--bar) + 4rem); border-top: 1px solid rgba(13,16,21,.12); }
+.close__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: end; }
+.close p.quiet { font-size: .98rem; line-height: 1.6; color: var(--soft); max-width: 26rem; }
+.close ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; font-size: 1rem; }
+.close ul a { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+.close ul a:hover { text-decoration-color: var(--red); }
+.close ul li span { color: var(--soft); }
+.close small { display: block; margin-top: 2.2rem; font-size: .8rem; color: var(--soft); }
+@media (max-width: 860px) { .close__in { grid-template-columns: 1fr; } }
+
+/* ======================================================== reduced motion */
+@media (prefers-reduced-motion: reduce) { .apts [data-sc-in] { transform: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#call">Skip to contact</a>
+<span data-sc-progress></span>
+
+<!-- shared fan blades, drawn once -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="blades">
+      <path d="M0 0 C 6 -10, 30 -24, 44 -14 C 46 -4, 30 6, 0 0 Z" fill="#3A3F48" stroke="#4E5560" stroke-width="1.2"/>
+      <path d="M0 0 C 6 -10, 30 -24, 44 -14 C 46 -4, 30 6, 0 0 Z" fill="#3A3F48" stroke="#4E5560" stroke-width="1.2" transform="rotate(120)"/>
+      <path d="M0 0 C 6 -10, 30 -24, 44 -14 C 46 -4, 30 6, 0 0 Z" fill="#3A3F48" stroke="#4E5560" stroke-width="1.2" transform="rotate(240)"/>
+      <circle r="9" fill="#2B3038"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- THE ROW: the navigation is a row of outdoor units. Each one powers on when you reach its section and stays running. -->
+<nav class="row" aria-label="Sections">
+  <a class="row__brand" href="#name" data-go="name"><b>HVAC</b> PRO <i>NY</i></a>
+  <ol data-row></ol>
+  <a class="btn btn--call" href="tel:+19296360812"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg><span class="num row__num">(929) 636-0812</span><span class="row__call">Call</span></a>
+</nav>
+
+<main>
+
+  <!-- 1 · THE NAME. The wordmark is the image; a real condenser sits between it and you. -->
+  <section id="name" class="name" data-sc-act="flow" aria-label="HVAC Pro NY">
+    <div class="name__far" aria-hidden="true">
+      <svg class="flame" viewBox="0 0 200 260" data-plane="flame"><path fill="currentColor" d="M104 4c14 52-24 74-44 112-17 32-20 78 6 108 13 15 34 30 58 32-24-20-30-48-18-74 6 18 18 28 34 30-10-28 2-56 22-78 4 30 22 44 30 72 12 44-14 76-50 82 54 6 92-34 92-88 0-44-22-74-46-104C164 66 136 40 104 4Z"/></svg>
+      <svg class="snow" viewBox="-100 -100 200 200" data-plane="snow"><g fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"><g id="arm"><path d="M0 0V-92M0-56l-20-20M0-56l20-20M0-26l-16-16M0-26l16-16"/></g><use href="#arm" transform="rotate(60)"/><use href="#arm" transform="rotate(120)"/><use href="#arm" transform="rotate(180)"/><use href="#arm" transform="rotate(240)"/><use href="#arm" transform="rotate(300)"/></g></svg>
+    </div>
+    <div class="wrap">
+      <div class="name__top">
+        <img src="assets/logo-sticker.webp" width="509" height="477" alt="HVAC Pro NY, LLC logo">
+        <p><b>HVAC Pro NY, LLC</b><br>Brooklyn &amp; Queens · Open 24 hours</p>
+      </div>
+      <h1 class="mark" data-plane="mark"><span class="w1">HVAC</span> <span class="w2">PRO</span> <span class="w3">NY</span></h1>
+      <div class="name__low">
+        <div class="name__copy">
+          <p class="tag">Heat and AC for <em>NYC apartments.</em></p>
+          <p class="sub">Repairs, installs and maintenance for apartments and the buildings they&rsquo;re in. <b>Ask for Deanysh.</b></p>
+          <div class="ctas">
+            <a class="btn btn--call" href="tel:+19296360812"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg><span class="num">(929) 636-0812</span></a>
+            <a class="btn btn--line" href="sms:+19296360812">Text</a>
+          </div>
+          <p class="proof"><span class="stars" aria-hidden="true">★★★★★</span><span><b>5.0</b> on Google · 8 reviews</span><span>· Open 24 hours</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="unit-hero" data-plane="unit" aria-hidden="true">
+      <div class="unit-hero__shadow"></div>
+      <div class="fan"><svg viewBox="-50 -50 100 100" data-fan="hero"><use href="#blades"/></svg></div>
+      <img src="assets/condenser.webp" width="1400" height="1218" alt="" fetchpriority="high">
+    </div>
+  </section>
+
+  <!-- 2 · APARTMENTS. Lines land at different scales and anchors. -->
+  <section id="apartments" class="apts" data-sc-act="flow" aria-labelledby="ap-h">
+    <div class="wrap">
+      <h2 id="ap-h" class="label" style="color: var(--soft); font-family: var(--sc-font-display); line-height: 1">What we work on</h2>
+      <p class="ln l1" data-sc-in style="margin-top: 1.6rem">The unit under the window.</p>
+      <p class="ln l2" data-sc-in>The split on the bedroom wall.</p>
+      <p class="ln l3" data-sc-in>The row of condensers out back.</p>
+      <p class="ln l4" data-sc-in>The heat, in January.</p>
+      <p class="after" data-sc-in>Through-wall units, ductless mini-splits, central air and heating, in apartments and buildings across <b>Brooklyn and Queens</b>.</p>
+    </div>
+  </section>
+
+  <!-- 3 · THE WALL (the peak). Eight units on a building face power on one at a time. -->
+  <section id="wall" class="wall dark" data-sc-act="pin" data-sc-span="3.6" aria-labelledby="wall-h">
+    <div data-sc-stage>
+      <div class="wall__in">
+        <div class="wall__head">
+          <div data-sc-cue="0 0.62 0 0.25">
+            <h2 id="wall-h">One call covers <em>the whole wall.</em></h2>
+            <p>Scroll to start them up.</p>
+          </div>
+          <div class="done" data-sc-cue="0.66 1 0.12 0">
+            <h2>All eight <em>running.</em></h2>
+            <a class="btn btn--call" href="tel:+19296360812"><span class="num">Call (929) 636-0812</span></a>
+          </div>
+        </div>
+        <div class="units" data-units></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · THE WORK. Real photos, labelled like specimens. -->
+  <section id="work" class="work" data-sc-act="flow" aria-labelledby="wk-h">
+    <div class="wrap">
+      <h2 id="wk-h" data-sc-in>The work.</h2>
+      <p class="intro" data-sc-in>Straight from the HVAC Pro NY job file. No stock photos.</p>
+      <div class="shots">
+        <figure data-sc-reveal="up" data-sc-reveal-at="0.12 0.34">
+          <div class="ph"><img src="assets/work-01.webp" width="1050" height="1400" loading="lazy" alt="A long row of white mini-split condensers on metal stands along the side of a building, with gray central air condensers further down"></div>
+          <dl><dt>Where</dt><dd>Side of a building</dd><dt>What</dt><dd>A bank of mini-split condensers on stands, central air further down the row</dd></dl>
+        </figure>
+        <figure data-sc-reveal="up" data-sc-reveal-at="0.2 0.42">
+          <div class="ph"><img src="assets/work-02.webp" width="1050" height="1400" loading="lazy" alt="White mini-split condensers mounted up a building wall with copper line sets and electrical run to each"></div>
+          <dl><dt>Where</dt><dd>Same building</dd><dt>What</dt><dd>Condensers mounted up the wall, each piped and wired</dd></dl>
+        </figure>
+        <figure data-sc-reveal="up" data-sc-reveal-at="0.28 0.5">
+          <div class="ph"><img src="assets/work-03.webp" width="1050" height="1400" loading="lazy" alt="A through-wall apartment air conditioner opened up with its coil and wiring exposed during a repair" style="object-position: 50% 40%"></div>
+          <dl><dt>Where</dt><dd>Inside an apartment</dd><dt>What</dt><dd>Through-wall unit opened up for repair</dd></dl>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · REVIEWS. The fragments people actually wrote, set huge. -->
+  <section id="reviews" class="reviews on-red" data-sc-act="flow" aria-labelledby="rv-h">
+    <div class="wrap">
+      <h2 id="rv-h" class="score"><b>5.0</b><span class="stars" aria-hidden="true">★★★★★</span><span style="font-family: var(--sc-font-text); font-weight: 500; text-transform: none; font-size: 1.05rem">on Google, from 8 reviews</span></h2>
+      <figure class="rv">
+        <blockquote data-sc-cue="0.1 1 0.2 0" data-sc-kinetic="lines">Fixed the issue fast.</blockquote>
+        <figcaption>&ldquo;He fixed the issue fast and even when he had to come back the next day, he was on time and took no longer than 20 minutes.&rdquo;<cite>Google review</cite></figcaption>
+      </figure>
+      <figure class="rv">
+        <blockquote data-sc-cue="0.24 1 0.18 0" data-sc-kinetic="lines">On time.</blockquote>
+        <figcaption>&ldquo;Fixed the hvac system in my apartment, finished rather quickly and was nice!&rdquo;<cite>Google review</cite></figcaption>
+      </figure>
+      <figure class="rv">
+        <blockquote data-sc-cue="0.38 1 0.18 0" data-sc-kinetic="lines">Very reasonable price.</blockquote>
+        <figcaption>&ldquo;This Man is very good and he is very reasonable price.&rdquo;<cite>Harman B., Google review</cite></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6 · ASK FOR DEANYSH -->
+  <section id="deanysh" class="who" data-sc-act="flow" aria-labelledby="who-h">
+    <div class="wrap">
+      <h2 id="who-h" data-sc-in>Ask for <span>Deanysh.</span></h2>
+      <div class="who__row" data-sc-in data-sc-stagger="80">
+        <img src="assets/logo-sticker.webp" width="509" height="477" alt="" loading="lazy">
+        <p><b>Deanysh Persaud</b>, HVAC technician, HVAC Pro NY, LLC. Heating, ventilation and air conditioning for apartments and buildings in Brooklyn and Queens. Open 24 hours, every day.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · THE CLOSE. The quietest type on the page. The row below is running. -->
+  <section id="call" class="close" aria-labelledby="call-h">
+    <div class="wrap close__in">
+      <div>
+        <h2 id="call-h" class="label" style="font-size: .95rem; line-height: 1">HVAC Pro NY, LLC</h2>
+        <p class="quiet" style="margin-top: .8rem">That&rsquo;s every unit running. When one of yours isn&rsquo;t, call.</p>
+      </div>
+      <ul>
+        <li><a href="tel:+19296360812">Call <span class="num">(929) 636-0812</span></a></li>
+        <li><a href="sms:+19296360812">Text <span class="num">(929) 636-0812</span></a></li>
+        <li><a href="mailto:hvacprofessionals.ny@gmail.com">hvacprofessionals.ny@gmail.com</a></li>
+        <li><span>Open 24 hours · Brooklyn &amp; Queens</span></li>
+      </ul>
+    </div>
+    <div class="wrap"><small>&copy; 2026 HVAC Pro NY, LLC<!-- TODO(Deanysh): license number, exact service area --></small></div>
+  </section>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script>ScrollCraft.mount(document.body);</script>
+<script>
+(function () {
+  'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clamp01 = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
+  var seg = function (p, a, b) { return clamp01((p - a) / (b - a)); };
+  var fanSVG = '<svg viewBox="-50 -50 100 100"><use href="#blades"/></svg>';
+
+  /* ------------------------------------------------------ build the row */
+  var SECTIONS = [
+    { id: 'apartments', label: 'Apartments' }, { id: 'wall', label: 'Services' }, { id: 'work', label: 'Work' },
+    { id: 'reviews', label: 'Reviews' }, { id: 'deanysh', label: 'Deanysh' }, { id: 'call', label: 'Contact' }
+  ];
+  var rowEl = document.querySelector('[data-row]');
+  SECTIONS.forEach(function (s) {
+    var li = document.createElement('li');
+    li.innerHTML = '<a class="u" href="#' + s.id + '" data-go="' + s.id + '" aria-label="' + s.label + '">' +
+      '<span class="mini" aria-hidden="true"><span class="mini__body"></span><span class="fan">' + fanSVG + '</span><span class="mini__led"></span><span class="mini__legs"></span></span>' +
+      '<span class="u__t">' + s.label + '</span></a>';
+    rowEl.appendChild(li);
+  });
+  var rowUnits = [].slice.call(rowEl.querySelectorAll('a.u'));
+
+  /* ------------------------------------------------------ build the wall */
+  var SERVICES = ['Repairs', 'New installs', 'Replacements', 'Ductless splits', 'Central air', 'Through-wall units', 'Heating', '24-hour calls'];
+  var unitsEl = document.querySelector('[data-units]');
+  SERVICES.forEach(function (name) {
+    var f = document.createElement('figure');
+    f.className = 'u8';
+    f.innerHTML = '<div class="u8__box"><span class="u8__bracket" aria-hidden="true"></span><span class="fan">' + fanSVG + '</span>' +
+      '<img src="assets/condenser.webp" width="1400" height="1218" alt="" loading="lazy"><span class="u8__led" aria-hidden="true"></span></div>' +
+      '<figcaption>' + name + '</figcaption>';
+    unitsEl.appendChild(f);
+  });
+  var wallUnits = [].slice.call(unitsEl.children);
+
+  /* ------------------------------------------------------ every fan on the page */
+  var fans = [];
+  function addFan(svg, getSpeed) { fans.push({ el: svg, a: Math.random() * 360, v: 0, target: getSpeed }); }
+  addFan(document.querySelector('[data-fan="hero"]'), function () { return heroSpeed; });
+  rowUnits.forEach(function (u, i) { addFan(u.querySelector('svg'), function () { return rowState[i] === 2 ? 900 : rowState[i] === 1 ? 420 : 0; }); });
+  wallUnits.forEach(function (u, i) { addFan(u.querySelector('.fan svg'), function () { return wallOn[i] ? 760 : 0; }); });
+
+  var heroSpeed = 140, rowState = SECTIONS.map(function () { return 0; }), wallOn = SERVICES.map(function () { return false; });
+
+  /* ------------------------------------------------------ scroll state */
+  var name = document.getElementById('name'), wall = document.getElementById('wall');
+  var mark = document.querySelector('[data-plane="mark"]'), unit = document.querySelector('[data-plane="unit"]');
+  var flame = document.querySelector('[data-plane="flame"]'), snow = document.querySelector('[data-plane="snow"]');
+  var lastY = scrollY, vel = 0;
+
+  function wallProgress() {
+    var r = wall.getBoundingClientRect();
+    return clamp01(-r.top / Math.max(wall.offsetHeight - innerHeight, 1));
+  }
+  function current() {
+    var y = innerHeight * 0.5, idx = -1;
+    SECTIONS.forEach(function (s, i) { if (document.getElementById(s.id).getBoundingClientRect().top < y) idx = i; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) idx = SECTIONS.length - 1;
+    return idx;
+  }
+
+  var last = performance.now(), lastRunning = -1;
+  function tick(now) {
+    requestAnimationFrame(tick);
+    var dt = Math.min((now - last) / 1000, 0.05); last = now;
+    var y = scrollY; vel += ((y - lastY) / Math.max(dt, 0.001) - vel) * 0.15; lastY = y;
+
+    // the name: planes at different rates, the unit rises toward you
+    var t = clamp01(y / innerHeight);
+    if (!reduce && t < 1) {
+      mark.style.transform = 'translate3d(0,' + (t * 70).toFixed(1) + 'px,0)';
+      unit.style.transform = 'translate3d(0,' + (-t * 160).toFixed(1) + 'px,0) scale(' + (1 + t * 0.06).toFixed(3) + ')';
+      flame.style.transform = 'translate3d(0,' + (t * 40).toFixed(1) + 'px,0)';
+      snow.style.transform = 'translate3d(0,' + (t * 110).toFixed(1) + 'px,0) rotate(' + (t * 30).toFixed(1) + 'deg)';
+    }
+    heroSpeed = 140 + Math.min(Math.abs(vel) * 0.9, 1400);
+
+    // the row: reached sections switch on and stay on
+    var c = current();
+    rowUnits.forEach(function (u, i) {
+      rowState[i] = i === c ? 2 : i < c ? 1 : 0;
+      u.classList.toggle('is-on', i <= c);
+      u.setAttribute('aria-current', i === c ? 'true' : 'false');
+    });
+
+    // the wall: eight units power on in order
+    var p = wallProgress(), running = 0;
+    wallUnits.forEach(function (u, i) {
+      var on = p > 0.05 + i * 0.064;
+      wallOn[i] = on; u.classList.toggle('is-on', on); if (on) running++;
+    });
+    if (running !== lastRunning) { unitsEl.setAttribute('data-sc-verify-state', 'running:' + running); lastRunning = running; }
+    // all eight on is the resolved frame of the act: an authored hold, not dead scroll
+    unitsEl.setAttribute('data-sc-verify-hold', running === wallUnits.length && p > 0.7 ? 'true' : 'false');
+
+    if (reduce) return;
+    for (var k = 0; k < fans.length; k++) {
+      var f = fans[k], tv = f.target();
+      f.v += (tv - f.v) * Math.min(dt * 2.2, 1);     // spin up and run down like a real motor
+      if (f.v < 0.5 && tv === 0) continue;
+      f.a = (f.a + f.v * dt) % 360;
+      f.el.style.transform = 'rotate(' + f.a.toFixed(1) + 'deg)';
+    }
+  }
+  requestAnimationFrame(tick);
+
+  /* ------------------------------------------------------ jump from the row */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-go]');
+    if (!a) return;
+    e.preventDefault();
+    var el = document.getElementById(a.dataset.go);
+    var top = a.dataset.go === 'wall' ? el.offsetTop + (el.offsetHeight - innerHeight) * 0.72 : el.getBoundingClientRect().top + scrollY;
+    window.scrollTo({ top: top, behavior: reduce ? 'auto' : 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
